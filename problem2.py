@@ -16,16 +16,19 @@ def sum_fibionacci():
         count_previous = count - count_previous
     return total
 
-# def sum_with_list():
-#     fib_list = [1, 1]
-#     while fib_list[-1] < 4000000:
-#         fib_list.append(fib_list[-1] + fib_list[-2])
-#     del fib_list[-1]
-#     print(fib_list)
-#     return sum(fib_list)
+def sum_with_list():
+    fib_list = [1, 1]
+    while fib_list[-1] < 4000000:
+        fib_list.append(fib_list[-1] + fib_list[-2])
+    del fib_list[-1]
+    print(fib_list)
+    for item in fib_list:
+        if item % 2 != 0:
+            fib_list.remove(item)
+    return sum(fib_list)
 
 timedit = timer_module.timer(sum_fibionacci)
-# listit = timer_module.timer(sum_with_list)
+listit = timer_module.timer(sum_with_list)
 
 print("Sum of Fibionacci numbers up to 4 million is %d. Took %.10f seconds." % (timedit[1], timedit[0]))
-# print("Sum of Fibionacci numbers up to 4 million is %d. Took %.10f seconds." % (listit[1], listit[0]))
+print("Sum of Fibionacci numbers up to 4 million is %d. Took %.10f seconds." % (listit[1], listit[0]))

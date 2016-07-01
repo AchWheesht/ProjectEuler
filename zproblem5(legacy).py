@@ -37,6 +37,76 @@ alist = [
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
     31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
 
+def prune_list(numbers):
+    new_numbers = []
+    for item in numbers:
+        if item == 1:
+            numbers.remove(item)
+    for item in numbers:
+        flag = True
+        for i in range(len(numbers)):
+            if item == numbers[i]: continue
+            if numbers[i] % item == 0: flag = False
+        if flag:
+            new_numbers.append(item)
+    return new_numbers
+
+def find_lcd_of_two_numbers(a, b):
+    if a == b:
+        return 1
+    elif a % b == 0:
+        return a
+    elif b % a == 0:
+        return b
+    else:
+        sum_a = a
+        sum_b = b
+        while True:
+            if sum_a == sum_b:
+                return sum_a
+            if sum_a > sum_b:
+                sum_b += b
+            if sum_b > sum_a:
+                sum_a += a
+
+def find_lcd_of_list(number_list):
+    number_list = number_list
+    while len(number_list) > 1:
+        lcd = find_lcd_of_two_numbers(number_list[0], number_list[1])
+        number_list[0] = lcd
+        del number_list[1]
+    return number_list[0]
+
+
+def find_lcd(numbers_list, prime_list = None):
+    numbers = prune_list(numbers_list)
+    print("Pruned List: ", numbers)
+    prime_list = []
+    largest_number = 0
+    while len(numbers) > 1:
+        largest_number = max([numbers[0], numbers[1], largest_number])
+        prime_list = prime_generator.send(math.sqrt(largest_number))
+        print("finding lcd of  %d and %d" % (numbers[0], numbers[1]))
+        a = prime_factor_module.find_prime_factors(numbers[0], prime_list)
+        b = prime_factor_module.find_prime_factors(numbers[1], prime_list)
+        finished = False
+        while finished == False:
+            finished = True
+            for item in b:
+                if item in a:
+                    finished = False
+                    a.remove(item)
+                    b.remove(item)
+        if b:
+            b = condense(b)
+            numbers[0] *= b
+            del numbers[1]
+        else:
+            if numbers[1] < numbers[0]:
+                del numbers[1]
+            else: del numbers[0]
+    return numbers[0]
+
 def find_lcd_alternate(numbers_list, prime_list = None):
     numbers = prune_list(numbers_list)
     print("Pruned List: ", numbers)
@@ -80,25 +150,19 @@ def find_lcd_with_primes(x, y):
     print("finding lcd of  %d and %d: %d" % (x, y, result))
     return result
 
-def prune_list(numbers):
-    new_numbers = []
-    for item in numbers:
-        if item == 1:
-            numbers.remove(item)
-    for item in numbers:
-        flag = True
-        for i in range(len(numbers)):
-            if item == numbers[i]: continue
-            if numbers[i] % item == 0: flag = False
-        if flag:
-            new_numbers.append(item)
-    return new_numbers
 
 def condense(values):
     while len(values) > 1:
         values[0] *= values[1]
         del values[1]
     return values[0]
+
+# product = 1
+# for i in range(len(alist)):
+#     product *= alist[i]
+#
+# print("Finding primes for: ", product)
+# prime_list = prime_generator_module.generate_primes_super_advanced("number", product)
 
 def print_result(*args):
     args = args[0]
@@ -109,7 +173,18 @@ def print_result(*args):
 prime_generator = prime_generator_generator.generate_primes_generator(0)
 prime_generator.send(None)
 
-print("time for primes: ", timer_module.timer(print_result, [find_lcd_alternate, alist]))
+while True:
+    choice = input("Which solution? (primes, addition, both, exit)")
+    if choice == "exit":
+        break
+    elif choice == "primes" or choice == "both":
+        print("time for primes: ", timer_module.timer(print_result, [find_lcd_alternate, alist]))
+        #print(find_lcd(alist))
+    elif choice == "addition" or choice == "both":
+        print("time for simple: ", timer_module.timer(print_result, [find_lcd_of_list, alist]))
+        #print(find_lcd_of_list(alist))
+    else:
+        print("invalid input")
 
 
 # while len(alist) > 1:
